@@ -79,21 +79,21 @@ def delete_user(username: str):
 
 
 @cli.command()
-def find_user(username: str, email: str):
+def find_user(user_str: str):
+    info = ''
     with get_session() as db:
-        #if username in db.execUser.username:
         users = db.exec(select(User)).all()
+        #print(users) # debug
         for user in users:
-            if username in user.username:
+            if user_str in user.username:
                 print(user)
-                return
+                info += user.username
             else:
-                if email in user.email:
+                if user_str in user.email:
                     print(user)
-                    return
-                else:
-                    print(f'{username} or {email} not found! Unable to find user.')
-                    return
+                    info += user.email
+        if (info == ""):
+            print(f'Unable to find user with name or email {user_str}')
 
 @cli.command()
 def get_first_N_users(limit = 10, offset = 0):
